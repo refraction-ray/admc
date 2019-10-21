@@ -20,4 +20,4 @@ And we have the following examples to show the power of this new ADMC technique.
 ### Examples
 
 * Fast locate the critical value for 2D Ising model
-* End-to-end, easy-to-implement VMC
+* End-to-end, easy-to-implement VMC with neural network
