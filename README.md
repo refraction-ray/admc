@@ -10,7 +10,7 @@ Due to the structure of Metropolis-Hasting algorithm, we can simulate the distri
 The method to compute the derivatives of such MC expectation from unnormalized probability is lack in the literature. To utilize the power of existing ML frameworks, the only thing to hack is the object function. According to our papers, just change the object function from O to:
 
 <p align="center">
-  <img width="150%" src="./static/admcobj.svg">
+  <img width="40%" src="./static/admcobj.svg">
 </p>
 
 where p is the unnormalized probability (density).
@@ -32,7 +32,7 @@ Note the code experiments are all implemented with TensorFlow 1.13 in static gra
   In this example, we show six approaches to calculate Fisher matrix for a distribution with input parameters (3 for normalized distributions and 3 for unnormalized distributions). The fancy AD approach to evaluate Fisher matrix is to instead computing KL divergence defined below in the forward pass. And the Hessian of such KL object is just Fisher matrix.
 
     <p align="center">
-       <img width="150%" src="./static/klobj.svg">
+       <img width="120%" src="./static/klobj.svg">
     </p>
 
 * End-to-end, easy-to-implement VMC with neural network wavefunctions
