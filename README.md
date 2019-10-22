@@ -1,7 +1,7 @@
 ADMC
 ==========
 
-*Infinite order automatic differentiation for Monte Carlo expectations from unormalized probability distributions.*
+*Infinite order automatic differentiation for Monte Carlo expectations from unnormalized probability distributions.*
 
 ### Introduction
 
@@ -9,19 +9,21 @@ Due to the structure of Metropolis-Hasting algorithm, we can simulate the distri
 
 The method to compute the derivatives of such MC expectation from unnormalized probability is lack in the literature. To utilize the power of existing ML frameworks, the only thing to hack is the object function. According to our papers, just change the object function from O to:
 
-$$
-\frac{\langle \frac{p}{\bot{p}}O\rangle_p}{\langle \frac{p}{\bot {p}}\rangle_p}
-$$
+![$$\frac{\langle \frac{p}{\bot{p}}O\rangle_p}{\langle \frac{p}{\bot {p}}\rangle_p}$$](./static/admcobj.svg)
 
-where p is the unnormalized probability.
+where p is the unnormalized probability (density).
 
 And we have the following examples to show the power of this new ADMC technique.
 
 ### Examples
 
+Note the code experiments are all implemented with TensorFlow 1.13 in static graph mode.
+
 * Fastly locate the critical value for 2D Ising model
 
   In this example, we utilize various features that ML frameworks that enable us to utilize. We implement Wolff update scheme for 2D Ising model with vectorize scheme so that tens of thounds of Markov Chains can be simulated at the same time easily. Together with GPU acceleration, automatic differentiation infrastructure and carefully designed optimizers, ML frameworks can make our life easy even beyond ML tasks.
+
+  ![](./static/tctraining.svg)
 
 * Calculate Fisher matrix for unnormalized distribution with novel AD on KL divergence
 
