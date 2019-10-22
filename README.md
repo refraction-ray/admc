@@ -19,5 +19,13 @@ And we have the following examples to show the power of this new ADMC technique.
 
 ### Examples
 
-* Fast locate the critical value for 2D Ising model
-* End-to-end, easy-to-implement VMC with neural network
+* Fastly locate the critical value for 2D Ising model
+
+  In this example, we utilize various features that ML frameworks that enable us to utilize. We implement Wolff update scheme for 2D Ising model with vectorize scheme so that tens of thounds of Markov Chains can be simulated at the same time easily. Together with GPU acceleration, automatic differentiation infrastructure and carefully designed optimizers, ML frameworks can make our life easy even beyond ML tasks.
+
+* Calculate Fisher matrix for unnormalized distribution with novel AD on KL divergence
+
+  In this example, we show six approaches to calculate Fisher matrix for a distribution with parameters.
+
+
+* End-to-end, easy-to-implement VMC with neural network wavefunctions
