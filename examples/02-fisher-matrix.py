@@ -4,38 +4,35 @@ import numpy as np
 import tensorflow as tf
 
 
-def lnnormalp(x, mean, cov):
-    k = mean.shape[-1].value
-    cov = tf.reshape(cov, [-1, k, k])
-    y = (
-        tf.reshape((x - mean), [-1, 1, k])
-        @ tf.linalg.inv(cov)
-        @ tf.reshape((x - mean), [-1, k, 1])
-    )
-    z = (2.0 * np.pi) ** (0.5 * tf.constant(k, dtype=tf.float32)) * tf.abs(
-        tf.linalg.det(cov[0])
-    ) ** (0.5)
-    return -0.5 * y + tf.log(z)
-
-
-def lnunnormalp(x, mean, cov):
-    k = mean.shape[-1].value
-    cov = tf.reshape(cov, [-1, k, k])
-    y = (
-        tf.reshape((x - mean), [-1, 1, k])
-        @ tf.linalg.inv(cov)
-        @ tf.reshape((x - mean), [-1, k, 1])
-    )
-    return -0.5 * y
-
-
 D = 3
-var = tf.zeros(dtype=tf.float32, shape=[D])
-cov = tf.eye(D, dtype=tf.float32)
+ftype = tf.float32
+var = tf.zeros(dtype=ftype, shape=[D])
+cov = tf.eye(D, dtype=ftype)
 
 
 def meanf(var):
     return (var + 1.0) ** 2
+
+
+def lnunnormalp(x, mean, cov):
+    x = x - mean
+    #     y = tf.tensordot(tf.tensordot(x ,tf.linalg.inv(cov), axes=[1,0]), x, axes=[1,1])
+    #     y = tf.diag_part(y)
+    d = mean.shape[-1].value
+    y = tf.reshape(x, [-1, 1, d]) @ tf.linalg.inv(cov) @ tf.reshape(x, [-1, d, 1])
+    # the above one should be the best as broadcasting in multiply, but it is only supported after tf1.13.2
+    # for compatibility, use commented tensordot method instead: drawback is hugh memeory consumption
+    # see https://github.com/tensorflow/tensorflow/issues/216 and PR therein for broadcasting support on multiply in tf
+    return -0.5 * y
+
+
+def lnnormalp(x, mean, cov):
+    k = mean.shape[-1].value
+    y = lnunnormalp(x, mean, cov)
+    z = 0.5 * tf.constant(k, dtype=ftype) * tf.log(2.0 * np.pi) + 0.5 * tf.log(
+        tf.abs(tf.linalg.det(cov))
+    )
+    return y - z
 
 
 def fisher1(num_sample=1000, meanf=None, cov=None):
@@ -48,7 +45,7 @@ def fisher1(num_sample=1000, meanf=None, cov=None):
     )
     r = []
     sample = tf.stop_gradient(mgd.sample(num_sample))
-    s = tf.placeholder(dtype=tf.float32, shape=[None, D])
+    s = tf.placeholder(dtype=ftype, shape=[None, D])
     lnp = lnnormalp(s, mean, cov)
     dpdv = tf.gradients(lnp, var)
     with tf.Session() as sess:
@@ -80,7 +77,7 @@ def fisher2(num_sample=1000, meanf=None, cov=None):
     )
     r = []
     sample = tf.stop_gradient(mgd.sample(num_sample))
-    s = tf.placeholder(dtype=tf.float32, shape=[None, D])
+    s = tf.placeholder(dtype=ftype, shape=[None, D])
     lnp = lnunnormalp(s, mean, cov)
     dpdv = tf.gradients(lnp, var)
     with tf.Session() as sess:
@@ -112,9 +109,7 @@ def fisher3(num_sample=1000, meanf=None, cov=None):
         loc=mean, covariance_matrix=cov
     )
     sample = tf.stop_gradient(mgd.sample(num_sample))
-    mean_v = tf.stack([mean] * num_sample)
-    cov_v = tf.stack([cov] * num_sample)
-    lnp = lnnormalp(sample, mean_v, cov_v)
+    lnp = lnnormalp(sample, mean, cov)
     r = tf.reduce_mean(lnp)
     kl = tf.stop_gradient(r) - r
     fisher = tf.hessians(kl, var)
@@ -130,9 +125,7 @@ def fisher4(num_sample=1000, meanf=None, cov=None):
         loc=mean, covariance_matrix=cov
     )
     sample = tf.stop_gradient(mgd.sample(num_sample))
-    mean_v = tf.stack([mean] * num_sample)
-    cov_v = tf.stack([cov] * num_sample)
-    lnp = lnunnormalp(sample, mean_v, cov_v)
+    lnp = lnunnormalp(sample, mean, cov)
     lnpoverp = lnp - tf.stop_gradient(lnp)
     poverp = tf.exp(lnp - tf.stop_gradient(lnp))
     kl = tf.log(tf.reduce_mean(poverp)) - tf.reduce_mean(lnpoverp)
@@ -145,12 +138,11 @@ def idn(x):
     """
     A wrapper for lnp-tf.stop_gradient(lnp)+1., where lnp is x here
     """
-    y = tf.ones_like(x)
 
     def grad(dy):
         return dy
 
-    return y, grad
+    return tf.ones_like(x), grad
 
 
 def fisher5(num_sample=1000, meanf=None, cov=None):
@@ -162,9 +154,7 @@ def fisher5(num_sample=1000, meanf=None, cov=None):
         loc=mean, covariance_matrix=cov
     )
     sample = tf.stop_gradient(mgd.sample(num_sample))
-    mean_v = tf.stack([mean] * num_sample)
-    cov_v = tf.stack([cov] * num_sample)
-    lnp = lnnormalp(sample, mean_v, cov_v)
+    lnp = lnnormalp(sample, mean, cov)
     lnpoverp = idn(lnp)
     kl = -tf.reduce_mean(tf.log(lnpoverp)) / 2
     fisher = tf.hessians(kl, var)
@@ -180,9 +170,7 @@ def fisher6(num_sample=1000, meanf=None, cov=None):
         loc=mean, covariance_matrix=cov
     )
     sample = tf.stop_gradient(mgd.sample(num_sample))
-    mean_v = tf.stack([mean] * num_sample)
-    cov_v = tf.stack([cov] * num_sample)
-    lnp = lnunnormalp(sample, mean_v, cov_v)
+    lnp = lnunnormalp(sample, mean, cov)
     lnpoverp = idn(lnp)
     kl = tf.log(tf.reduce_mean(lnpoverp)) - tf.reduce_mean(tf.log(lnpoverp))
     fisher = tf.hessians(kl, var)

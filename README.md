@@ -19,7 +19,7 @@ And we have the following examples to show the power of this new ADMC technique.
 
 ### Examples
 
-Note the code experiments are all implemented with TensorFlow (tested on tf1.13, cpu and gpu version) in static computational graph mode.
+Note the code experiments are all implemented with TensorFlow (tested on tf1.14, cpu and gpu version) in static computational graph mode.
 
 * Quickly locate the critical temperature for 2D Ising model
 
