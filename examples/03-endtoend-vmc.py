@@ -285,7 +285,6 @@ def test():
 
     log_phi = log_phi(lx * ly)
     admc = Heisenberg_2d(lx, ly, log_phi, 5000)
-    admc.s_update
     admc.set_learning_rate(0.002)
     # admc.set_optimizer(tf.train.AdamOptimizer)
     admc.optimize(300, lx * ly)
