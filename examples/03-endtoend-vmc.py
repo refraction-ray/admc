@@ -139,12 +139,6 @@ class ADVMC:
 
     def optimize(self, N, n_t, debug=True):
         for i in range(N):
-            for j in range(n_t):
-                self.sess.run(
-                    self.s_update,
-                    feed_dict={self.learning_rate_placeholder: self.learning_rate},
-                )
-
             energy, accept = self.update_param(n_t)
 
             if debug:
