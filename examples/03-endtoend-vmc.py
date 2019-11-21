@@ -1,3 +1,8 @@
+"""
+Python3 example on how to implement end-to-end ADVMC in TensorFlow.
+The specific example here is 2D Heisenberg model.
+"""
+
 # import os
 # os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = "true"
 import tensorflow as tf
@@ -47,7 +52,8 @@ class ADVMC:
         raise Exception("no implementation in base class ADVMC")
 
     def update(self):
-        # only shows spin flip update preserving total spin sz, not the general case here
+        # only shows spin flip update preserving total spin sz,
+        # the most general case is not implemented here
         s0 = self.s0
         mask = s0
         o = tf.stop_gradient(tf.random.categorical(tf.math.log(mask), 1)[:, 0])
@@ -177,7 +183,7 @@ class Heisenberg_2d(ADVMC):
                 ),
                 [n_mc, 1],
             )
-        )  ## Sz=0 state as initial condition
+        )  ## Sz=0 state as the initial condition
 
     def h_loc(self):
         J = 1.0
@@ -227,7 +233,7 @@ class Heisenberg_2d(ADVMC):
         return tf.stop_gradient(Hj + Ht) / 4.0
 
 
-def test():
+def test():  ## user case on how to utilize the general ADVMC class above
     class Log_phi(tf.keras.Model):
         def __init__(self, l, name=None):
             super().__init__(name=name)
@@ -272,6 +278,7 @@ def test():
     # admc.set_optimizer(tf.train.AdamOptimizer)
     admc.optimize(300, lx * ly)
 
+    # simple visualization
     import matplotlib.pyplot as plt
 
     data = admc.history

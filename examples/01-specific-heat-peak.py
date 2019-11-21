@@ -1,3 +1,8 @@
+"""
+Python3 script for fast searching on phase boundary.
+Showcase example is transition in 2D Ising model.
+"""
+
 # import os
 # os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = "true"
 import numpy as np
@@ -7,8 +12,7 @@ from functools import partial
 itype = tf.int32
 ftype = tf.float32
 
-# spin shape (batch, x, y)
-
+# spin shape (batch, x, y) where batch is for different Markov chains
 # find boundary say for each batch there is some 1
 # mask is new comer, as Fold, one only track neighbor of Fold on each round
 # cluster is a tracker of old stuff to be flipped
@@ -73,7 +77,7 @@ def mc(temp=2.3, J=-1.0, times=100, spin=None, measure=None):
     if spin is None:
         spin = [10, 10, 10]
     if isinstance(spin, list):
-        #         spin = tf.random.uniform(shape=spin, dtype=tf.int32, maxval=2, minval=0)*2-1
+        #         spin = tf.random.uniform(shape=spin, dtype=tf.int32, maxval=2, minval=0) * 2 - 1
         spin = tf.ones(dtype=itype, shape=spin)
     obj = []
     param = {"temp": temp, "J": J}
@@ -114,7 +118,8 @@ def absmag(spin, **kws):
     return tf.abs(tf.reduce_sum(spin, axis=[-1, -2]))
 
 
-# note measure functions cannot be dressed with defun somehow in egaer mode since high order derivative will have problems
+# note measure functions cannot be dressed with defun somehow in eager mode
+# since high order derivative will have problems in practice
 def energy_d(spin, param):
     J, temp = param["J"], param["temp"]
     e = energy(spin, param)
@@ -139,7 +144,7 @@ if __name__ == "__main__":
 
     optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001)
     temp = tf.Variable(initial_value=2.3)
-    sshape = [5000, 26, 26]
+    sshape = [5000, 26, 26]  # 2D Ising model with lattice size 26*26
     spin_ = np.ones(dtype=np.int32, shape=sshape)
     spin = tf.placeholder(dtype=itype, shape=sshape)
     epochs = 100
@@ -164,4 +169,4 @@ if __name__ == "__main__":
             print(cv_, dcvdt_)
 
     stable_steps = int(epochs / 3)
-    print(np.mean(templ[stable_steps:]))
+    print(np.mean(templ[stable_steps:]))  # estimated transition temperature

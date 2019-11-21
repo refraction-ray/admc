@@ -1,3 +1,8 @@
+"""
+Python3 script on obtaining FIM
+with focus on AD approach
+"""
+
 # import os
 # os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = "true"
 import numpy as np
@@ -21,7 +26,7 @@ def lnunnormalp(x, mean, cov):
     d = mean.shape[-1].value
     y = tf.reshape(x, [-1, 1, d]) @ tf.linalg.inv(cov) @ tf.reshape(x, [-1, d, 1])
     # the above one should be the best as broadcasting in multiply, but it is only supported after tf1.13.2
-    # for compatibility, use commented tensordot method instead: drawback is hugh memeory consumption
+    # for compatibility, use commented tensordot method instead: the drawback is hugh memeory consumption
     # see https://github.com/tensorflow/tensorflow/issues/216 and PR therein for broadcasting support on multiply in tf
     return -0.5 * y
 
@@ -63,7 +68,6 @@ def fisher1(num_sample=1000, meanf=None, cov=None):
         for j in range(i + 1, D):
             fisher[i, j] = np.mean(r[:, i] * r[:, j])
     fisher = fisher + fisher.T
-
     return fisher
 
 
@@ -96,7 +100,6 @@ def fisher2(num_sample=1000, meanf=None, cov=None):
         for j in range(i + 1, D):
             fisher[i, j] = np.mean(r[:, i] * r[:, j]) - meandpdv[i] * meandpdv[j]
     fisher = fisher + fisher.T
-
     return fisher
 
 
@@ -188,4 +191,4 @@ if __name__ == "__main__":
     with tf.Session() as sess:
         [f3_, f4_, f5_, f6_] = sess.run([f3, f4, f5, f6])
 
-    print([f1_, f2_, f3_, f4_, f5_, f6_])  ## 4*eye(D)
+    print([f1_, f2_, f3_, f4_, f5_, f6_])  ## should be 4*eye(D)
