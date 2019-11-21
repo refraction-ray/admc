@@ -17,3 +17,5 @@ jobs:
       - name: test scripts
         run: |
           python examples/01-specific-heat-peak.py
+          python examples/02-fisher-matrix.py
+          python examples/03-endtoend-vmc.py

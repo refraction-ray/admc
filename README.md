@@ -3,6 +3,8 @@ ADMC
 
 *Infinite order automatic differentiation for Monte Carlo expectations from unnormalized probability distributions.*
 
+![https://github.com/refraction-ray/admc/workflows//badge.svg](https://github.com/refraction-ray/admc/workflows/Test%20code%20examples/badge.svg)
+
 ### Introduction
 
 Due to the nature of Metropolis-Hasting algorithm, we can simulate the distribution by Monte Carlo as long as we have the knowledge of the ratio between probabilities (densities) for two different configurations. Namely, we can sample data from unnormalized probability distributions with unknown normalized factors of the distribution (which usually denoted as partition function in statistics physics). There are various scenarios for such MC with unormalized probability, including MCMC to estimate posteriors in Bayesian inference context and classical Monte Carlo as well as Quantum Monte Carlo methods to evaluate observable quantities from Hamiltonian models in statistical physics context.
