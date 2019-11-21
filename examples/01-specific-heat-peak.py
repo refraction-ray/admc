@@ -144,7 +144,11 @@ if __name__ == "__main__":
 
     optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001)
     temp = tf.Variable(initial_value=2.3)
-    sshape = [50, 10, 10]  # 2D Ising model with lattice size 10*10 using 50 Markov chains
+    sshape = [
+        50,
+        10,
+        10,
+    ]  # 2D Ising model with lattice size 10*10 using 50 Markov chains
     spin_ = np.ones(dtype=np.int32, shape=sshape)
     spin = tf.placeholder(dtype=itype, shape=sshape)
     epochs = 50

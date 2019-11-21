@@ -3,7 +3,7 @@ ADMC
 
 *Infinite order automatic differentiation for Monte Carlo expectations from unnormalized probability distributions.*
 
-![https://github.com/refraction-ray/admc/workflows//badge.svg](https://github.com/refraction-ray/admc/workflows/Test%20code%20examples/badge.svg)
+![action badge](https://github.com/refraction-ray/admc/workflows/tests/badge.svg)
 
 ### Introduction
 
@@ -12,7 +12,7 @@ Due to the nature of Metropolis-Hasting algorithm, we can simulate the distribut
 The method to compute the derivatives of such MC expectation from unnormalized probability is lack in the literature. To utilize the power of existing ML frameworks, the only thing to hack is the object function. According to our papers, infinitely AD-aware MC expectation objective is:
 
 <p align="center">
-  <img width="130" src="./static/admcobj.svg"/>
+  <img width="140" src="./static/admcobj.svg"/>
 </p>
 
 where p is the unnormalized probability (density).
