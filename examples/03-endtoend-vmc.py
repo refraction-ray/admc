@@ -273,10 +273,10 @@ def test():  ## user case on how to utilize the general ADVMC class above
     lx = 4
     ly = 4
     log_phi = Log_phi(lx * ly)
-    admc = Heisenberg_2d(lx, ly, log_phi, 5000)
+    admc = Heisenberg_2d(lx, ly, log_phi, 50)
     admc.set_learning_rate(0.002)
     # admc.set_optimizer(tf.train.AdamOptimizer)
-    admc.optimize(300, lx * ly)
+    admc.optimize(60, lx * ly)
 
     # simple visualization
     import matplotlib.pyplot as plt

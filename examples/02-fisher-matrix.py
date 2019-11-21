@@ -181,12 +181,12 @@ def fisher6(num_sample=1000, meanf=None, cov=None):
 
 
 if __name__ == "__main__":
-    f1_ = fisher1(num_sample=1000, meanf=meanf, cov=cov)
-    f2_ = fisher2(num_sample=1000, meanf=meanf, cov=cov)
-    f3 = fisher3(num_sample=1000, meanf=meanf, cov=cov)
-    f4 = fisher4(num_sample=1000, meanf=meanf, cov=cov)
-    f5 = fisher5(num_sample=1000, meanf=meanf, cov=cov)
-    f6 = fisher6(num_sample=1000, meanf=meanf, cov=cov)
+    f1_ = fisher1(num_sample=100, meanf=meanf, cov=cov)
+    f2_ = fisher2(num_sample=100, meanf=meanf, cov=cov)
+    f3 = fisher3(num_sample=100, meanf=meanf, cov=cov)
+    f4 = fisher4(num_sample=100, meanf=meanf, cov=cov)
+    f5 = fisher5(num_sample=100, meanf=meanf, cov=cov)
+    f6 = fisher6(num_sample=100, meanf=meanf, cov=cov)
 
     with tf.Session() as sess:
         [f3_, f4_, f5_, f6_] = sess.run([f3, f4, f5, f6])
